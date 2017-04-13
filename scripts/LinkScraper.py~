@@ -25,7 +25,7 @@ class LinkScraper(object):
     self._class = 'rg_meta'
     self._preurl = 'https://www.google.com/search?q='
     self._posturl = '&source=lnms&tbm=isch&start=%d'
-    self._discarded = 0
+
     #iteration stuff
     self._idx=0 # TODO: read the sidx from # of files in the folder
     self._links = []
@@ -72,7 +72,7 @@ class LinkScraper(object):
       if not any(site in link for site in BLACKLIST):
         img_links.append((link,fmt)) # flag to check existance?
       else:
-        self._discarded+=1
+        print('unwanted provider')
         
     self.increment_idx(len(img_links))
     return img_links
@@ -96,7 +96,7 @@ class LinkScraper(object):
     txt=open('../data/'+query.replace(' ','_') +'.txt', 'w')
     while self._idx<size:
         self.update_links(self.scrape_once(query,txt, log))
-        print('link_count: ', self._idx, ' discarded: ', self._discarded)
+        print('link_count: ', self._idx)
         time.sleep(delay)
     txt.close()
     return self._links

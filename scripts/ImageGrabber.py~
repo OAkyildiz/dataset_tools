@@ -37,6 +37,7 @@ class ImageGrabber(object):
         
         # read the image
         img=np.asarray(bytearray(resp.content), dtype="uint8")
+        print('fuck')
         img=cv2.imdecode(img, cv2.IMREAD_COLOR)
         # path/to/image.fmt :
         img_name=self._name+str(self._idx)+'.'+fmt
