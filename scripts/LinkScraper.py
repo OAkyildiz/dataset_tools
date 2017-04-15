@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 import sys #for arg parsing
 import time
@@ -73,7 +74,7 @@ class LinkScraper(object):
         img_links.append((link,fmt)) # flag to check existance?
       else:
         self._discarded+=1
-        
+
     self.increment_idx(len(img_links))
     return img_links
 
@@ -87,7 +88,7 @@ class LinkScraper(object):
         for url,fmt in links:
           txt.write("%s, %s\n" %(url,fmt))
 
-       
+
       return links
   # query = search query for images
   # size = amount of images
