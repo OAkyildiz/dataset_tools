@@ -1,7 +1,3 @@
-# image_scraper
-An image scraper module to collect images with the given query.
-
-
 # image_prep
 Image preprocessor for Image database suite.
 
