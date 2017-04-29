@@ -12,28 +12,44 @@ def main():
   # no idee why I went with these variable names
   data_dir = None
   data_fldr = None
-
+  set_fldr = None
   while not data_dir:
     try:
       data_dir = abspath(join(getcwd(), input('path for dataset folders: ')))
-      fldrs=listdir(data_dir)
+      #remove non files in a trivial way
+      fldrs=[ elm for elm in fldrs=listdir(data_dir) if "." not in elm ]
+      
     except (FileNotFoundError, NotADirectoryError) as edir:
       print("Invalid path")
       data_dir=None
     if not fldrs:
       print("Empty directory")
       data_dir=None
+      
   print('In ',data_dir)
-
   while not data_fldr:
     try:
       idx=int(input('Choose from (0-%d): \n'%(len(fldrs)-1) + str(fldrs)+'\n'))
       data_fldr=fldrs[idx]
+      full_path=join(data_dir, data_fldr)
+      sets=[ elm for elm in listdir(full_path) if "." not in elm ]
+      
     except (IndexError, NotADirectoryError, TypeError) as ei:
       print('Invalid entry')
       data_fldr = None
+      
+      
+  print('In ',data_fldr)
+  while not set_fldr:
+    try:
+      idx=int(input('Choose from (0-%d): \n'%(len(sets)-1) + str(sets)+'\n'))
+      set_fldr=sets[idx]
+      full_path=join(full_path, set_fldr)
+    except (IndexError, NotADirectoryError, TypeError) as ei:
+      print('Invalid entry')
+      set_fldr = None
+## add one more layer
 
-  full_path=join(data_dir, data_fldr)
   images=listdir(full_path)
 
   # ask number of classes

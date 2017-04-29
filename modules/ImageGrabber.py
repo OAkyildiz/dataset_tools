@@ -17,7 +17,7 @@ class ImageGrabber(object):
     self._name = name.replace(' ','_') # let's not ahve spaces in folder names
     self._header = header
     self._session = session
-    self._dir = '../data/'+ self._name
+    self._dir = 'data/'+ self._name
     self._idx = 0
     os.makedirs(self._dir, exist_ok=True)
 

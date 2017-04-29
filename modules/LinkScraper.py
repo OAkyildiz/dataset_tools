@@ -94,7 +94,7 @@ class LinkScraper(object):
   # size = amount of images
   # delay = wait between each ite., don't make Uncle Google angry.
   def scrape(self,query,size,delay,log = True):
-    txt=open('../data/'+query.replace(' ','_') +'.txt', 'w')
+    txt=open('lists/'+query.replace(' ','_') +'.txt', 'w')
     while self._idx<size:
         self.update_links(self.scrape_once(query,txt, log))
         print('link_count: ', self._idx, ' discarded: ', self._discarded)

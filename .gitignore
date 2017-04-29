@@ -1,6 +1,6 @@
 #autosave
 *.*~
-_pycache_
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -102,6 +102,7 @@ ENV/
 
 # ignore images, or datasets
 /data
+/lists
 
 # CUDA
 *.i
