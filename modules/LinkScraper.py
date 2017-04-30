@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-
-import sys #for arg parsing
+from os import makedirs
 import time
+
 
 #web stuff
 import requests as rq
@@ -94,6 +94,7 @@ class LinkScraper(object):
   # size = amount of images
   # delay = wait between each ite., don't make Uncle Google angry.
   def scrape(self,query,size,delay,log = True):
+    makedirs('lists', exist_ok=True)
     txt=open('lists/'+query.replace(' ','_') +'.txt', 'w')
     while self._idx<size:
         self.update_links(self.scrape_once(query,txt, log))

@@ -23,7 +23,7 @@ def main():
       #eliminate non-folder
       #remove non files in a trivial way
       fldrs=[ elm for elm in fldrs if "." not in elm ]
-      
+
     except (FileNotFoundError, NotADirectoryError) as edir:
       print("Invalid path")
       data_dir=None
@@ -40,22 +40,22 @@ def main():
       print('Invalid entry')
       data_fldr = None
 
-  full_path=join(data_dir, data_fldr)
+  full_path=join(data_dir, data_fldr +'/originals')
 #  return full_path
 
-#def main(): 
-   
+#def main():
+
   #images=listdir(imgs_from_fldr())
-  images=listdir(full_path)  
+  images=listdir(full_path)
   size = (64, 64) #patch_size
   sizetxt = str(size[0])+str(size[1])
-  save_path=join(full_path, input('Please name your patching attempt: '))
-  
+  save_path=join(full_path, '../'+input('Please name your patching attempt: '))
+  print(save_path)
   makedirs(save_path, exist_ok=True)
   N=int(input('number of pathces: '))
   rand = np.random.RandomState(0)
 
-  
+
   for img_name in images:
     img=cv2.imread(join(full_path, img_name))
     print(img_name)
@@ -68,10 +68,10 @@ def main():
       print(target)
       cv2.imwrite(target, patch)
       count+=1
-      
-                                 
-    print(len(data))                             
-     
+
+
+    print(len(data))
+
 
 if __name__ == "__main__":
     exit(main())

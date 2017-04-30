@@ -30,11 +30,11 @@ class ImageGrabber(object):
       if fmt=='gif':
         #fmt='png'
         print('skipping .GIFs for now (%s)' %url)
-        
+
       else:
         if not fmt:
           fmt='jpg'
-        
+
         # read the image
         img=np.asarray(bytearray(resp.content), dtype="uint8")
         img=cv2.imdecode(img, cv2.IMREAD_COLOR)
@@ -43,7 +43,8 @@ class ImageGrabber(object):
         fullname=os.path.join(self._dir, img_name) #could have done it in one line
         #do something for gifs
 
-      
+        os.makedirs(fullname + '/originals', exist_ok=True)
+
         #imdecode
         cv2.imwrite(fullname, img)
 
