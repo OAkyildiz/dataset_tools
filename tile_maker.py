@@ -16,6 +16,7 @@ def main():
   data_fldr = None
 
 # def imgs_from_fldr():
+
   while not data_dir:
     try:
       data_dir = join(getcwd(), input('path for dataset folders: '))
@@ -44,15 +45,15 @@ def main():
 #  return full_path
 
 #def main():
-
+  hw=int(input('patch size: '))
+  N=int(input('number of pathces: '))
   #images=listdir(imgs_from_fldr())
   images=listdir(full_path)
-  size = (64, 64) #patch_size
+  size = (hw, hw) #patch_size
   sizetxt = str(size[0])+str(size[1])
   save_path=join(full_path, '../'+input('Please name your patching attempt: '))
   print(save_path)
   makedirs(save_path, exist_ok=True)
-  N=int(input('number of pathces: '))
   rand = np.random.RandomState(0)
 
 
@@ -66,7 +67,7 @@ def main():
     name_split=splitext(img_name)
     count=0
     for patch in data:
-      target=save_path+'/'+name_split[0]+'_'+ sizetxt +'_'+str(count)+'.png'
+      target=save_path+'/'+name_split[0]+'_'+ sizetxt +'_'+str(count)+'.jpg'
       print(target)
       cv2.imwrite(target, patch)
       count+=1
