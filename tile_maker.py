@@ -59,8 +59,10 @@ def main():
   for img_name in images:
     img=cv2.imread(join(full_path, img_name))
     print(img_name)
-
+    ###### ACTUAL STUFF #######
+    #Alternatively:    tf.extract_image_patches
     data = extract_patches_2d(img, size, max_patches=N, random_state=rand)
+    ###########################
     name_split=splitext(img_name)
     count=0
     for patch in data:

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 #import argparse
 import sys
-from modules import LinkScraper
-from modules import ImageGrabber
+from modules import scrape
+from modules import grab
 # TODO: use ArgParse
 # http://stackoverflow.com/questions/39390418/python-how-can-i-enable-use-of-kwargs-when-calling-from-command-line-perhaps
 
