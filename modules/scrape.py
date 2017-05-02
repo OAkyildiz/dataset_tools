@@ -79,6 +79,9 @@ class LinkScraper(object):
     return img_links
 
   # HERE
+  # now that I can scrape only once bc of Google,
+  # I don't like way I implementeed this. 
+# DEFINITELY sohuld be independent from its wrapper
 
   # this won't update the links
   def scrape_once(self ,query,txt , log):
@@ -96,7 +99,7 @@ class LinkScraper(object):
   def scrape(self,query,size,delay,log = True):
     makedirs('lists', exist_ok=True)
     txt=open('lists/'+query.replace(' ','_') +'.txt', 'w')
-    while self._idx<size:
+    while self._idx<size: #google wont let us
         self.update_links(self.scrape_once(query,txt, log))
         print('link_count: ', self._idx, ' discarded: ', self._discarded)
         time.sleep(delay)

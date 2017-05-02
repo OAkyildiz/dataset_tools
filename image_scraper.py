@@ -12,8 +12,8 @@ def main():
     keywrds = input('search query: ')
     n = input('#: ')
 
-    scutty = LinkScraper.LinkScraper()
-    gibby = ImageGrabber.ImageGrabber(keywrds)
+    scutty = scrape.LinkScraper()
+    gibby = grab.ImageGrabber(keywrds)
 
     #pls argparse
 

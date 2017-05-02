@@ -74,7 +74,6 @@ def main():
   #start labeling
   discards=[]
   makedirs('discards', exist_ok=True)
-  print(listdir('.'))
 
   labels=open('../'+set_fldr+ '_labels.txt', 'w')
   #iterate through images
@@ -83,12 +82,13 @@ def main():
   print("Hit any other key to skip the image for now.")
 
   cv2.namedWindow('image', cv2.WINDOW_NORMAL)
+  c=0;
   for fname in images:
-    print(fname)
+    c+=1
+    print(fname, 'n: ',c)
 
     img=cv2.imread(fname) # laod image, could do it in one line
     cv2.imshow('image', img)
-
     hit=cv2.waitKey(0) & 0xff
     print(chr(hit))
     if chr(hit) in classes:
