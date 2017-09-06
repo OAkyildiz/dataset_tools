@@ -1,4 +1,4 @@
-import cv2, tkinter
+import cv2
 import numpy as np
 import sys
 import argparse
