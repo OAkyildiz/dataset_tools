@@ -305,10 +305,12 @@ def main():
     images=listdir(path)
     mask_save_path = path +'/../masks/'
     merged_save_path = path +'/../masked/'
-    
+    processed_path = path +'/processed/'
+
     makedirs(mask_save_path, exist_ok=True)
     makedirs(merged_save_path, exist_ok=True)
-    
+    makedirs(processed_path, exist_ok=True)
+
     print('EdgeUI, v0.4')
     print('Image annotation tool for labeling')
     print('by Ozan Akyildiz')
@@ -348,11 +350,12 @@ def main():
         #print(mask)
         #print('  bitmask:', mask.shape, mask.dtype)
         b,g,r=cv2.split(img0)
-        print('Saved :' + nm)
+        print('Saved :' + nm + '.png', ', and moved the src img')
         to_save=cv2.merge((b,g,r,mask))
+        os.rename(path+'/'+img_name, processed_path+img_name)
         print(to_save.shape, to_save.dtype)
-    # remove noise
-        cv2.imwrite( mask_save_path + img_name, mask)
+    # remove noise 
+        cv2.imwrite( mask_save_path + nm + '.bmp', mask)
         cv2.imwrite( merged_save_path + nm +'.png', to_save)
     cv2.destroyAllWindows()
 
