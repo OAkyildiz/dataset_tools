@@ -1,9 +1,9 @@
-import cv2, tkinter
+import cv2
 import numpy as np
 import sys
 import argparse
-from os.path import splitext
-from os import listdir, makedirs
+from os.path import splitext, isdir
+from os import listdir, makedirs, rename
 
 #cv2.CV_64F, cv2.CV_8UC3
 color_mode=cv2.CV_8UC1
@@ -289,6 +289,11 @@ class EdgeUI(object):
                 print('      Cleared canvas')
                 self.clearcanvas()     
             
+if sys.version_info < (3,0):
+    def mkdirIfMissing(path):
+        if not isdir(path):
+            makedirs(path)
+
 def main():        
     parser = argparse.ArgumentParser(description='Run basic Edge detection algortihms on a given image.')
     parser.add_argument('img_path', metavar='base', type=str, help='Path to the image to process.')
@@ -304,10 +309,19 @@ def main():
     images=listdir(path)
     mask_save_path = path +'/../masks/'
     merged_save_path = path +'/../masked/'
-    
-    makedirs(mask_save_path, exist_ok=True)
-    makedirs(merged_save_path, exist_ok=True)
-    
+    # let's move the files we processed already for convenience.
+    processed_path = path +'/processed/'
+
+    if sys.version_info < (3,0):
+        mkdirIfMissing(mask_save_path)
+        mkdirIfMissing(merged_save_path)
+        mkdirIfMissing(processed_path)
+
+    else:
+        makedirs(mask_save_path, exist_ok=True)
+        makedirs(merged_save_path, exist_ok=True)
+        makedirs(processed_path, exist_ok=True)
+            
     print('EdgeUI, v0.4')
     print('Image annotation tool for labeling')
     print('by Ozan Akyildiz')
@@ -336,7 +350,7 @@ def main():
         print('----------')
         print('Opened :' + img_name)
         #img0 = cv2.imread(args.img_path, cv2.CV_8UC1)
-        img0 = cv2.imread(path+'/'+img_name)
+        img0 = cv2.imread(path+'/'+img_name) #TODO: inconsistency of / to fix
 
         print(img0.shape, img0.dtype)
 
@@ -347,11 +361,12 @@ def main():
         #print(mask)
         #print('  bitmask:', mask.shape, mask.dtype)
         b,g,r=cv2.split(img0)
-        print('Saved :' + nm)
+        print('Saved :' + nm + '.png', ', and moved the src img')
         to_save=cv2.merge((b,g,r,mask))
+        os.rename(path+'/'+img_name, processed_path+img_name)
         print(to_save.shape, to_save.dtype)
-    # remove noise
-        cv2.imwrite( mask_save_path + img_name, mask)
+    # remove noise 
+        cv2.imwrite( mask_save_path + nm + '.bmp', mask)
         cv2.imwrite( merged_save_path + nm +'.png', to_save)
     cv2.destroyAllWindows()
 
