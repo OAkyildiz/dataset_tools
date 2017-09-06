@@ -43,7 +43,7 @@ class ImageGrabber(object):
         fullname=os.path.join(self._dir, img_name) #could have done it in one line
         #do something for gifs
 
-        os.makedirs(fullname + '/originals', exist_ok=True)
+        #os.makedirs(fullname + '/originals', exist_ok=True)
 
         #imdecode
         cv2.imwrite(fullname, img)
