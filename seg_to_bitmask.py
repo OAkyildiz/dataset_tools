@@ -26,12 +26,12 @@ def main():
 def readSeg(filepath):
     seg=dict()
     f=open(filepath)
-    nm,ext = splitext(basename(filepath))
+    
     
     pathinfo=readSplit(f) #TODO: make it a dictionary
     print(filepath,': .seg file for', pathinfo)
     seg[pathinfo[0]]=pathinfo[1]    
-    
+    nm,ext = splitext(basename(seg['image']))
     while(1):
         ln=readSplit(f)
         if ln[0]=='format':    
@@ -53,11 +53,11 @@ def readSeg(filepath):
     
     img=cv2.imread(seg['image'])
     if img is not None:
-        mergeMask(img, mask, '../auto/'+nm+'.png')
+        mergeMask(img, mask, '../masked_seg/'+nm+'.png')
         return True
         
     else:
-        cv2.imwrite('../masks/'+nm+'.bmp',mask)
+        cv2.imwrite('../masks_seg/'+nm+'.bmp',mask)
         print('image not found')
         return False
         

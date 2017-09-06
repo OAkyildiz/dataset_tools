@@ -1,4 +1,4 @@
-import cv2
+import cv2, tkinter
 import numpy as np
 import sys
 import argparse
@@ -16,13 +16,13 @@ def avg(img,x):
     return cv2.blur(img,(x,x))
 
 def gaussian(img,x):
-    return cv2.GaussianBlur(img,(x, x),1)
+    return cv2.GaussianBlur(img,(x, x),0)
 
 def median(img,x):
     return cv2.medianBlur(img,x)
 
 def bilateral(img,x):
-    return cv2.bilateralFilter(img,x,50,80)
+    return cv2.bilateralFilter(img,x,32,80)
 
 
 blurs={   0 : none,
@@ -112,15 +112,14 @@ class EdgeUI(object):
         self.name=name
         self.display=indisplay
         cv2.namedWindow(self.name)
-       # cv2.moveWindow(self.name, 400,20)
         cv2.namedWindow(self.display)
-        cv2.moveWindow(self.display, 400,320)
+        cv2.moveWindow(self.display, 20,320)
         cv2.namedWindow('OG')
-        cv2.moveWindow('OG', 800, 400)
+        cv2.moveWindow('OG', 400, 400)
         cv2.createTrackbar('blur mtd  (0,a,g,m,b)',self.name,0,4,self.setBlurMethod)
         cv2.createTrackbar('blur         ',self.name,0,20,self.setBlur)
         cv2.createTrackbar('filter type (0,sx,sy,l,c)',self.name,0,4,self.setFilter)
-        cv2.createTrackbar('threshold mtd (0,b,a,o)',self.name,0,3,self.setThreshMethod)
+        cv2.createTrackbar('threshold mtd (0,b,a,c)',self.name,0,3,self.setThreshMethod)
         cv2.createTrackbar('threshold val',self.name,0,255,self.setThreshold)
 
         
@@ -136,7 +135,7 @@ class EdgeUI(object):
             self.draw = True # true if mouse is pressed
             self.erase = False
             self.ix,self.iy = x,y
-            #print('       brush size: ', self.brush_size)
+            print('       brush size: ', self.brush_size)
         elif event == cv2.EVENT_MOUSEMOVE:
             if self.draw == True:
                 #self.erase = False
@@ -149,7 +148,7 @@ class EdgeUI(object):
             self.erase = True
             self.draw = False
             self.ix,self.iy = x,y
-           # print('       brush size: ', self.brush_size)
+            print('       brush size: ', self.brush_size)
         elif event == cv2.EVENT_MOUSEMOVE:
             if self.erase == True:
                 #self.draw = False
@@ -240,7 +239,7 @@ class EdgeUI(object):
     
     def clearcanvas(self):
         self.canvas=np.zeros((self.inp.shape[0], self.inp.shape[1], 3), np.uint8)
-        self.showcanvaslayers()
+        #self.showcanvaslayers()
         
     def filter2canvas(self):
         self.canvas=cv2.cvtColor(self.out, cv2.COLOR_GRAY2BGR)  
