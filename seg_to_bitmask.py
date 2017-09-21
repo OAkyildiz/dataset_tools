@@ -17,31 +17,36 @@ def main():
     print('Number of files', len(segfiles))
     chdir(path)
 
-    makedirs('../auto', exist_ok=True)
+    makedirs('../auto/masks_seg', exist_ok=True)
+    makedirs('../auto/masked_seg', exist_ok=True)
     
+    errs=[]
     for seg in segfiles:
 
-        readSeg(seg)  
+        if not readSeg(seg):
+           errs.append(seg)  
+    print('Orphan segs:')
+    print(errs)
     
 def readSeg(filepath):
-    seg=dict()
+    segobj=dict()
     f=open(filepath)
     
     
     pathinfo=readSplit(f) #TODO: make it a dictionary
     print(filepath,': .seg file for', pathinfo)
-    seg[pathinfo[0]]=pathinfo[1]    
-    nm,ext = splitext(basename(seg['image']))
+    segobj[pathinfo[0]]=pathinfo[1]    
+    nm,ext = splitext(basename(segobj['image']))
     while(1):
         ln=readSplit(f)
         if ln[0]=='format':    
             f.readline() #skip 'data'
             break
         else:
-            seg[ln[0]]=int(ln[1])
+            segobj[ln[0]]=int(ln[1])
             
-    mask=np.zeros((seg['height'], seg['width']), np.uint8)
-
+    mask=np.zeros((segobj['height'], segobj['width']), np.uint8)
+ 
     while(1):
         line=readSplit(f)
         
@@ -50,17 +55,18 @@ def readSeg(filepath):
             writeRow(data,mask)
         else:
             break
-    
-    img=cv2.imread(seg['image'])
+    cv2.imwrite('../auto/masks_seg/'+nm+'.bmp',mask)
+    img=cv2.imread(segobj['image'])
     if img is not None:
-        mergeMask(img, mask, '../masked_seg/'+nm+'.png')
+        mergeMask(img, mask, '../auto/masked_seg/'+nm+'.png')
         return True
         
     else:
-        cv2.imwrite('../masks_seg/'+nm+'.bmp',mask)
-        print('image not found')
+        print('image '+ nm + ' not found')
         return False
-        
+       
+    
+
         
 def mergeMask(img, mask, path):
     print(img.shape)

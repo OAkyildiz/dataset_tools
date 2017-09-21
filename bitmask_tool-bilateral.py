@@ -9,27 +9,17 @@ from os import listdir, makedirs, rename
 color_mode=cv2.CV_8UC1
 #8UC1
 
-def none(img, *args):
+def none(img,*args):
     return img
 
-def avg(img,x):
-    return cv2.blur(img,(x,x))
+def bilateral(img,d,sSpace,sCol):
+    return cv2.bilateralFilter(img,d,sSpace,sCol)
+#def adaptivebilateral(img,d,sSpace,Scol):
+#    return cv2.adaptiveBilateralFilter(src, d, sSpace, maxSigmaColor=sCol) 
 
-def gaussian(img,x):
-    return cv2.GaussianBlur(img,(x, x),0)
-
-def median(img,x):
-    return cv2.medianBlur(img,x)
-
-def bilateral(img,x):
-    return cv2.bilateralFilter(img,x,40,100)
-
-
-blurs={   0 : none,
-          1 : avg,
-          2 : gaussian,
-          3 : median,
-          4 : bilateral
+blurs={  
+          0 : bilateral,
+          #1 : adaptivebilateral
 }
 
 
@@ -51,9 +41,9 @@ def canny(img):
         #sobely = cv2.Sobel(self.blur,cv2.CV_64F,0,1,ksize=5)  # y
         #filtered = cv2.Canny(self.blur,100,200)
 filters={ 0 : none,
-          1 : sobelX,
-          2 : sobelY,
-          3 : laplacian,
+          1 : laplacian,
+          2 : sobelX,
+          3 : sobelY, 
           4 : canny
 }
 
@@ -87,8 +77,10 @@ class EdgeUI(object):
     
     blurSel=0
     blurVal=1
+    sigmaSpace=0
+    sigmaColor=0
     thresholdVal=0
-    threshSel=0
+    threshSel=1
     THRESH_DIR=cv2.THRESH_BINARY_INV
     filterSel=0
     
@@ -117,10 +109,12 @@ class EdgeUI(object):
         cv2.moveWindow(self.display, 400,320)
         cv2.namedWindow('OG')
         cv2.moveWindow('OG', 800, 400)
-        cv2.createTrackbar('blur mtd  (0,a,g,m,b)',self.name,0,4,self.setBlurMethod)
+        #cv2.createTrackbar('blur mtd  (bi,a.b.)',self.name,0,1,self.setBlurMethod)
         cv2.createTrackbar('blur         ',self.name,0,20,self.setBlur)
-        cv2.createTrackbar('filter type (0,sx,sy,l,c)',self.name,0,4,self.setFilter)
-        cv2.createTrackbar('threshold mtd (0,b,a,o)',self.name,0,3,self.setThreshMethod)
+        cv2.createTrackbar('sigmaSpace   ',self.name,0,200,self.setSigmaSpace)
+        cv2.createTrackbar('sigmaColor   ',self.name,0,200,self.setSigmaCol)
+        #cv2.createTrackbar('filter type (0,sx,sy,l,c)',self.name,0,4,self.setFilter)
+        #cv2.createTrackbar('threshold mtd (0,b,a,o)',self.name,0,3,self.setThreshMethod)
         cv2.createTrackbar('threshold val',self.name,0,255,self.setThreshold)
 
         
@@ -189,13 +183,21 @@ class EdgeUI(object):
         self.brush_size=brushvals[self.brush_idx]
         print('       brush size: ', self.brush_size)
      
-    def setBlurMethod(self, mtd):
-        self.blurSel=mtd
-        self.blur() 
+    #def setBlurMethod(self, mtd):
+        #self.blurSel=mtd
+        #self.blur() 
     
     def setBlur(self, val):
         self.blurVal=val*2+1
         self.blur()        
+        
+    def setSigmaSpace(self, val):
+        self.sigmaSpace=val
+        self.blur()  
+        
+    def setSigmaCol(self, val):
+        self.sigmaColor=val
+        self.blur()  
         
     def setFilter(self, filter):
         self.filterSel=filter
@@ -214,7 +216,7 @@ class EdgeUI(object):
         self.threshold()    
         
     def blur(self):
-        self.blurred = blurs[self.blurSel](self.gray, self.blurVal)
+        self.blurred = blurs[self.blurSel](self.gray, self.blurVal,self.sigmaSpace, self.sigmaColor)
         self.filter()
    
     def filter(self):
