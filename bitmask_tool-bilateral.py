@@ -124,7 +124,6 @@ class EdgeUI(object):
 
         #
     # Mouse callbacks
-    
     def mouse_handler(self, event,x,y,flags,param):
         if event == cv2.EVENT_LBUTTONDOWN:
             self.draw = True # true if mouse is pressed
@@ -165,8 +164,47 @@ class EdgeUI(object):
                 self.brush_size-=1
             #print('brush size: ', self.brush_size)
             #put this on a seperate window
-        self.showcanvaslayers()
                 
+        self.showcanvaslayers()
+        
+        def filterWindowmouse(self, event,x,y,flags,param):
+            if event == cv2.EVENT_LBUTTONDOWN:
+                self.draw = True # true if mouse is pressed
+                self.erase = False
+                self.ix,self.iy = x,y
+                #print('       brush size: ', self.brush_size)
+            elif event == cv2.EVENT_MOUSEMOVE:
+                if self.draw == True:
+                    #self.erase = False
+                    #copy roi to canvas
+
+            elif event == cv2.EVENT_LBUTTONUP:
+                self.draw = False
+                #copy roi to canvas
+
+        
+           #ERASER stays the same 
+            if event == cv2.EVENT_RBUTTONDOWN:
+                self.erase = True
+                self.draw = False
+                self.ix,self.iy = x,y
+               # print('       brush size: ', self.brush_size)
+            elif event == cv2.EVENT_MOUSEMOVE:
+                if self.erase == True:
+                    #self.draw = False
+                    cv2.circle(self.canvas,(x,y),self.brush_size ,(0,0,0),-1)
+            elif event == cv2.EVENT_RBUTTONUP:
+                self.erase = False
+                cv2.circle(self.canvas,(x,y),self.brush_size ,(0,0,0),-1) 
+
+            if event == cv2.EVENT_MBUTTONDOWN:
+                self.draw = False
+                self.erase = False
+                self.togglebrush()
+            self.showcanvaslayers()
+
+
+   # def 
     #    elif event == cv2.EVENT_MBUTTONCLICK:
         #    cv2.imwrite()
         #def onChange(self):
