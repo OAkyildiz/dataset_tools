@@ -83,7 +83,7 @@ class EdgeUI(object):
     threshSel=1
     THRESH_DIR=cv2.THRESH_BINARY_INV
     filterSel=0
-    
+    w,h=0,0
     #currently we can use 2 as each step is triggered if the preeceding one is.
     inp=None
     gray=None
@@ -100,31 +100,33 @@ class EdgeUI(object):
     erase = False # if True, draw rectangle. Press 'm' to toggle to curve
     ix,iy = -1,-1
     
-    def __init__(self, name='Edge Filters',indisplay='Bitmask Drawer'):
+    def __init__(self,w,h, name='Edge Filters',indisplay='Bitmask Drawer'):
         self.name=name
         self.display=indisplay
+        self.w=w
+        self.h=h
         cv2.namedWindow(self.name)
-       # cv2.moveWindow(self.name, 400,20)
+       #cv2.moveWindow(self.name, 400,20)
         cv2.namedWindow(self.display)
-        cv2.moveWindow(self.display, 400,320)
+        cv2.moveWindow(self.display, w,h)
         cv2.namedWindow('OG')
         cv2.moveWindow('OG', 800, 400)
         #cv2.createTrackbar('blur mtd  (bi,a.b.)',self.name,0,1,self.setBlurMethod)
         cv2.createTrackbar('blur         ',self.name,0,20,self.setBlur)
-        cv2.createTrackbar('sigmaSpace   ',self.name,0,200,self.setSigmaSpace)
-        cv2.createTrackbar('sigmaColor   ',self.name,0,200,self.setSigmaCol)
+        cv2.createTrackbar('sigmaSpace   ',self.name,0,220,self.setSigmaSpace)
+        cv2.createTrackbar('sigmaColor   ',self.name,0,36,self.setSigmaCol)
         #cv2.createTrackbar('filter type (0,sx,sy,l,c)',self.name,0,4,self.setFilter)
         #cv2.createTrackbar('threshold mtd (0,b,a,o)',self.name,0,3,self.setThreshMethod)
         cv2.createTrackbar('threshold val',self.name,0,255,self.setThreshold)
 
         
-        cv2.setMouseCallback(self.display, self.mouse_handler)
-
+        cv2.setMouseCallback(self.display, self.mouseHandler)
+        cv2.setMouseCallback(self.name, self.filterMouseHandler)
         #cv2.createButton('blur',self.name,self.onChange)
 
         #
     # Mouse callbacks
-    def mouse_handler(self, event,x,y,flags,param):
+    def mouseHandler(self, event,x,y,flags,param):
         if event == cv2.EVENT_LBUTTONDOWN:
             self.draw = True # true if mouse is pressed
             self.erase = False
@@ -167,23 +169,30 @@ class EdgeUI(object):
                 
         self.showcanvaslayers()
         
-        def filterWindowmouse(self, event,x,y,flags,param):
+    def filterMouseHandler(self, event,x,y,flags,param):
             if event == cv2.EVENT_LBUTTONDOWN:
                 self.draw = True # true if mouse is pressed
                 self.erase = False
                 self.ix,self.iy = x,y
+                xi,xf,yi,yf = self.roify(x,y)
+
                 #print('       brush size: ', self.brush_size)
             elif event == cv2.EVENT_MOUSEMOVE:
                 if self.draw == True:
                     #self.erase = False
                     #copy roi to canvas
+                    xi,xf,yi,yf = self.roify(x,y)
+
+                    self.canvas[yi:yf,xi:xf]=cv2.cvtColor(cv2.bitwise_or(self.canvas[yi:yf,xi:xf,0], self.out[yi:yf,xi:xf]),cv2.COLOR_GRAY2RGB)#make this method so it doesn't look nasty
 
             elif event == cv2.EVENT_LBUTTONUP:
                 self.draw = False
                 #copy roi to canvas
+                xi,xf,yi,yf = self.roify(x,y)
 
+                self.canvas[yi:yf,xi:xf]=cv2.cvtColor(cv2.bitwise_or(self.canvas[yi:yf,xi:xf,0], self.out[yi:yf,xi:xf]),cv2.COLOR_GRAY2RGB)
         
-           #ERASER stays the same 
+           #hijack ERASER for overwriting, instead ofnitwise masking 
             if event == cv2.EVENT_RBUTTONDOWN:
                 self.erase = True
                 self.draw = False
@@ -192,18 +201,25 @@ class EdgeUI(object):
             elif event == cv2.EVENT_MOUSEMOVE:
                 if self.erase == True:
                     #self.draw = False
-                    cv2.circle(self.canvas,(x,y),self.brush_size ,(0,0,0),-1)
+                    xi,xf,yi,yf = self.roify(x,y)
+                    self.canvas[yi:yf,xi:xf]=cv2.cvtColor(self.out[yi:yf,xi:xf],cv2.COLOR_GRAY2RGB)
             elif event == cv2.EVENT_RBUTTONUP:
                 self.erase = False
-                cv2.circle(self.canvas,(x,y),self.brush_size ,(0,0,0),-1) 
+                xi,xf,yi,yf = self.roify(x,y)
+                self.canvas[yi:yf,xi:xf]=cv2.cvtColor(self.out[yi:yf,xi:xf],cv2.COLOR_GRAY2RGB)
 
             if event == cv2.EVENT_MBUTTONDOWN:
                 self.draw = False
                 self.erase = False
                 self.togglebrush()
+                
             self.showcanvaslayers()
-
-
+            
+    def roify(self,x,y):
+        sz=self.brush_size
+        [xi,xf]=np.clip([x-sz,x+sz],0,self.w-1)
+        [yi,yf]=np.clip([y-sz,y+sz],0,self.h-1)
+        return xi,xf,yi,yf
    # def 
     #    elif event == cv2.EVENT_MBUTTONCLICK:
         #    cv2.imwrite()
@@ -339,7 +355,7 @@ def main():
     #blank=np.zeros((240, 320, 3), np.uint8)
     #blank[:] = (0,0,0)
 
-    ui=EdgeUI()
+    ui=EdgeUI(400,320)
     #top = tkinter.Tk()
 
     images=listdir(path)
