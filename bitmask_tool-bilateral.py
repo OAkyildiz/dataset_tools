@@ -103,8 +103,7 @@ class EdgeUI(object):
     def __init__(self,w,h, name='Edge Filters',indisplay='Bitmask Drawer'):
         self.name=name
         self.display=indisplay
-        self.w=w
-        self.h=h
+       
         cv2.namedWindow(self.name)
        #cv2.moveWindow(self.name, 400,20)
         cv2.namedWindow(self.display)
@@ -170,11 +169,13 @@ class EdgeUI(object):
         self.showcanvaslayers()
         
     def filterMouseHandler(self, event,x,y,flags,param):
+	
             if event == cv2.EVENT_LBUTTONDOWN:
                 self.draw = True # true if mouse is pressed
                 self.erase = False
                 self.ix,self.iy = x,y
                 xi,xf,yi,yf = self.roify(x,y)
+                #print(x, y)
 
                 #print('       brush size: ', self.brush_size)
             elif event == cv2.EVENT_MOUSEMOVE:
@@ -192,7 +193,7 @@ class EdgeUI(object):
 
                 self.canvas[yi:yf,xi:xf]=cv2.cvtColor(cv2.bitwise_or(self.canvas[yi:yf,xi:xf,0], self.out[yi:yf,xi:xf]),cv2.COLOR_GRAY2RGB)
         
-           #hijack ERASER for overwriting, instead ofnitwise masking 
+           #hijack ERASER for overwriting, instead of bitwise masking 
             if event == cv2.EVENT_RBUTTONDOWN:
                 self.erase = True
                 self.draw = False
@@ -313,6 +314,8 @@ class EdgeUI(object):
             self.inp=cv2.imread(img)
         else:
             self.inp=img
+        self.w=self.inp.shape[1]
+        self.h=self.inp.shape[0]
         # converting to gray scale
         self.gray = cv2.cvtColor(self.inp, cv2.COLOR_BGR2GRAY)
         self.blur()
